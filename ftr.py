@@ -4,8 +4,6 @@ class FTR(reduction.Reduction):
     def __init__(self, mtx, labels):
         super().__init__(mtx, labels)
 
-    # Returns true if the distance of fromConcept and toConcept is less
-    # than maxDistance. cluster
     def distance(self, fromConcept, toConcept, maxDistance, cluster):
         ''' Calculating the distance of concepts
 
@@ -98,8 +96,8 @@ class FTR(reduction.Reduction):
 
         Returns
         -------
-        list
-            The list of clusters.
+        dict
+            The dictionary of clusters.
         '''
         clusters = {}
         index = 1
@@ -113,55 +111,6 @@ class FTR(reduction.Reduction):
                     clusters['K'+str(index)] = cluster
                     index += 1
         return clusters
-
-    def calcWeight(self, clusters, clusterFrom, clusterTo):
-        '''Calculates the weight of connection between two clusters
-
-        Parameters
-        ----------
-        clusters : dict
-            The key is the cluster's label, the value is a set containing the concepts.
-        clusterFrom : string
-            Label of the source cluster.
-        clusterTo : string
-            Label of the destination cluster.
-
-        Returns
-        -------
-        float
-            The weight of connection between clusterFrom and clusterTo.
-        '''
-        sumWeigth = 0.
-        connections = 0
-        for conceptFrom in clusters[clusterFrom]:
-            for conceptTo in clusters[clusterTo]:
-                sumWeigth += self.mtx[conceptFrom][conceptTo]
-                connections += 1
-        if connections == 0:
-            return 0
-        else:
-            return sumWeigth / connections
-
-    def calcAllWeights(self, clusters):
-        '''Calculates the weight matrix of the reduced model
-
-        Parameters
-        ----------
-        clusters : dict
-            Clusters of the reduced model.
-        
-        Returns
-        -------
-        dict
-            The weight matrix of the reduced model.
-        '''
-        mtx = {}
-        for clusterFrom in clusters:
-            row = {}
-            for clusterTo in clusters:
-                row[clusterTo] = self.calcWeight(clusters, clusterFrom, clusterTo)
-            mtx[clusterFrom] = row
-        return mtx
 
     def calcLabels(self, clusters):
         '''Defines the labels of the reduced model
